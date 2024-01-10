@@ -39,19 +39,24 @@ namespace PacMan
             InitializeComponent();
             
             pacman = new Pacman("pacman", 275, 275, 5, false, Properties.Resources.pacman_right,pacmanBox);
-            blinky = new Ghost("blinky", 240, 220, 8, false, Properties.Resources.blinky_right, redGhostBox);
-            clyde = new Ghost("clyde", 270, 220, 8, false, Properties.Resources.clyde_right, orangeGhostBox);
-            inky = new Ghost("inky", 300, 220, 8, false, Properties.Resources.inky_right, inkyGhostBox);
-            pinky = new Ghost("pinky", 330, 220, 8, false, Properties.Resources.pinky_right, pinkyGhostBox);
+            blinky = new Ghost("blinky", 240, 220, 1, false, Properties.Resources.blinky_right, redGhostBox);
+            clyde = new Ghost("clyde", 270, 220, 1, false, Properties.Resources.clyde_right, orangeGhostBox);
+            inky = new Ghost("inky", 300, 220, 1, false, Properties.Resources.inky_right, inkyGhostBox);
+            pinky = new Ghost("pinky", 330, 220, 1, false, Properties.Resources.pinky_right, pinkyGhostBox);
             currentSpeed = pacman.GetSpeed();
-
+            
             label2.Visible = false;
 
-            pacman.charShow();
-            blinky.charShow();
-            clyde.charShow();
-            inky.charShow();
-            pinky.charShow();
+            pacman.CharShow();
+            blinky.CharShow();
+            clyde.CharShow();
+            inky.CharShow();
+            pinky.CharShow();
+
+            blinky.GoRight = true;
+            clyde.GoUp = true;
+            inky.GoLeft = true;
+            pinky.GoRight = true;
             
 
             //Start timers and stopwatch
@@ -69,42 +74,42 @@ namespace PacMan
         
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            pacman.setSpeed(currentSpeed);
+            pacman.SetSpeed(currentSpeed);
             pacman.ResumeMoving(); // With the change of the direction, the movement is resumed
 
             if (e.KeyCode == Keys.Left)
             {
-                pacman.goUp = false;
-                pacman.goDown = false;
-                pacman.goRight = false;
-                pacman.goLeft = true;
-                pacman.img = Properties.Resources.pacman_left;
+                pacman.GoUp = false;
+                pacman.GoDown = false;
+                pacman.GoRight = false;
+                pacman.GoLeft = true;
+                pacman.Img = Properties.Resources.pacman_left;
             }
             if (e.KeyCode == Keys.Right)
             {
-                pacman.goUp = false;
-                pacman.goDown = false;
-                pacman.goLeft = false;
-                pacman.goRight = true;
-                pacman.img = Properties.Resources.pacman_right;
+                pacman.GoUp = false;
+                pacman.GoDown = false;
+                pacman.GoLeft = false;
+                pacman.GoRight = true;
+                pacman.Img = Properties.Resources.pacman_right;
             }
             if (e.KeyCode == Keys.Up)
             {
-                pacman.goUp = true;
-                pacman.goDown = false;
-                pacman.goRight = false;
-                pacman.goLeft = false;
-                pacman.img = Properties.Resources.pacman_up;
+                pacman.GoUp = true;
+                pacman.GoDown = false;
+                pacman.GoRight = false;
+                pacman.GoLeft = false;
+                pacman.Img = Properties.Resources.pacman_up;
             }
             if (e.KeyCode == Keys.Down)
             {
-                pacman.goUp = false;
-                pacman.goDown = true;
-                pacman.goRight = false;
-                pacman.goLeft = false;
-                pacman.img = Properties.Resources.pacman_down;
+                pacman.GoUp = false;
+                pacman.GoDown = true;
+                pacman.GoRight = false;
+                pacman.GoLeft = false;
+                pacman.Img = Properties.Resources.pacman_down;
             }
-            pacman.charShow();
+            pacman.CharShow();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -122,11 +127,11 @@ namespace PacMan
                 gameTimer.Stop();
                 return;
             }
-            if (pacman.dead)
+            if (pacman.Dead)
             {
                 timer1.Stop();
                 gameTimer.Stop();
-                pacman.charBox.Visible = false;
+                pacman.CharBox.Visible = false;
                 return;
             }
             // Placing special food (cherries and strawberries) every 30 seconds:
@@ -142,82 +147,120 @@ namespace PacMan
             pinky.Move();
 
             pacman.Move();
-            HitObject(pacman.charBox);
+
+            HitObject(pacman.CharBox);
+            HitObject(blinky.CharBox);
+            HitObject(clyde.CharBox);
+            HitObject(inky.CharBox);
+            HitObject(pinky.CharBox);
+
             ticks++;
         }
 
-        // Hit object logic
+        //===============================Hit object logic======================================
         private void HitObject(PictureBox charBox)
         {
-            foreach (Control obj in this.Controls)
+            if (charBox.Tag == "pacman")
             {
-                // Wall colisions:
-                if (obj is PictureBox && obj.Tag == "wall")
+                foreach (Control obj in this.Controls)
                 {
-                    if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                    // Wall colisions:
+                    if (obj is PictureBox && obj.Tag == "wall")
                     {
-                        pacman.StopMoving(); // Stop moving when the pacman hits the wall
-                        return;
-                    }
+                        if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                        {
+                            pacman.StopMoving(); // Stop moving when the pacman hits the wall
+                            return;
+                        }
                     
-                }
-                // Small food:
-                if (obj is PictureBox && obj.Tag == "food")
-                {
-                    if (charBox.Bounds.IntersectsWith(obj.Bounds))
-                    {
-                        this.Controls.Remove(obj); // Pacman eats the food, score increases by 10
-                        score += 10;
-                        eatenCount++;
-                        return;
                     }
-                }
-                // Large food (stars):
-                if (obj is PictureBox && obj.Tag == "foodLarge")
-                {
-                    if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                    // Small food:
+                    if (obj is PictureBox && obj.Tag == "food")
                     {
-                        this.Controls.Remove(obj);
-                        score += 50;
-                        eatenCount++;
-                        GhostsVulnerable();
-                        pacman.setSpeed(8);
-                        currentSpeed = pacman.GetSpeed();
-                        return;
+                        if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                        {
+                            this.Controls.Remove(obj); // Pacman eats the food, score increases by 10
+                            score += 10;
+                            eatenCount++;
+                            return;
+                        }
                     }
-                }
-                // Special food (stawberries and cherries):
-                if (obj is PictureBox && obj.Tag == "foodSpecial")
-                {
-                    if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                    // Large food (stars):
+                    if (obj is PictureBox && obj.Tag == "foodLarge")
                     {
-                        this.Controls.Remove(obj);
-                        score += 100;
-                        return;
+                        if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                        {
+                            this.Controls.Remove(obj);
+                            score += 50;
+                            eatenCount++;
+                            GhostsVulnerable();
+                            pacman.SetSpeed(8);
+                            currentSpeed = pacman.GetSpeed();
+                            return;
+                        }
                     }
-                }
-                // Ghost hit:
-                if (obj is PictureBox && obj.Tag == "ghost")
-                {
-                    if (obj.Bounds.IntersectsWith(charBox.Bounds))
+                    // Special food (stawberries and cherries):
+                    if (obj is PictureBox && obj.Tag == "foodSpecial")
                     {
+                        if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                        {
+                            this.Controls.Remove(obj);
+                            score += 100;
+                            return;
+                        }
+                    }
+                    // Ghost hit:
+                    if (obj is PictureBox && obj.Tag == "ghost")
+                    {
+                        if (obj.Bounds.IntersectsWith(charBox.Bounds))
+                        {
+                            if (blinky.vulnerable || clyde.vulnerable || inky.vulnerable || pinky.vulnerable)
+                            {
+                                blinky.SetPosition(240, 220);
+                                this.Controls.Remove(obj);
+                                score += 200;
+                                return;
+                            }
+                            else 
+                            {
+                                label2.Visible = true;
+                                label2.Text = "!!!GAME OVER!!!";
                         
-                        label2.Visible = true;
-                        label2.Text = "!!!GAME OVER!!!";
+                                pacman.Img = Properties.Resources.pacman_death;
+                                pacman.CharShow();
+                                timer1.Interval = 1300;
                         
-                        pacman.img = Properties.Resources.pacman_death;
-                        pacman.charShow();
-                        timer1.Interval = 1300;
-                        
-                        //pacman.charBox.Visible = false;
-                        pacman.dead = true;
-                        return;
+                                //pacman.charBox.Visible = false;
+                                pacman.Dead = true;
+                                return;
+                            }
+
+                        }
+                    }
+                }                
+            }
+            else // If charbox belongs to a ghost:
+            {
+                foreach (Control obj in this.Controls) 
+                {
+                    // Ghost wall colisions:
+                    if (obj is PictureBox && obj.Tag == "wall")
+                    {
+                        if (charBox.Bounds.IntersectsWith(obj.Bounds))
+                        {
+                            blinky.StopMoving();
+                            //clyde.StopMoving();
+                            //inky.StopMoving();
+                            //pinky.StopMoving();
+
+                            return;
+                        }
                     }
                 }
             }
         }
 
-        // Random choose between special foods and placing it on the game field
+        //=======Random choose between special foods and placing it on the game field=========
         private void PlaceSpecialFood() 
         {
             this.Controls.Remove(specialFoodBox);
@@ -245,20 +288,20 @@ namespace PacMan
             vulnticks = 0;
 
             blinky.vulnerable = true;
-            blinky.setSpeed(5);
-            blinky.charShow();
+            blinky.SetSpeed(5);
+            blinky.CharShow();
 
             clyde.vulnerable = true;
-            clyde.setSpeed(5);
-            clyde.charShow();
+            clyde.SetSpeed(5);
+            clyde.CharShow();
 
             inky.vulnerable = true;
-            inky.setSpeed(5);
-            inky.charShow();
+            inky.SetSpeed(5);
+            inky.CharShow();
 
             pinky.vulnerable = true;
-            pinky.setSpeed(5);
-            pinky.charShow();
+            pinky.SetSpeed(5);
+            pinky.CharShow();
 
             vulnerableTimer.Start();
         }
@@ -269,24 +312,20 @@ namespace PacMan
             if (vulnticks == 10)
             {
                 blinky.vulnerable = false;
-                blinky.setSpeed(8);
+                blinky.SetSpeed(8);
 
                 clyde.vulnerable = false;
-                clyde.setSpeed(8);
+                clyde.SetSpeed(8);
 
                 inky.vulnerable = false;
-                inky.setSpeed(8);
+                inky.SetSpeed(8);
 
                 pinky.vulnerable = false;
-                pinky.setSpeed(8);
+                pinky.SetSpeed(8);
 
                 GhostsRecover();
-                blinky.charShow();
-                clyde.charShow();
-                inky.charShow();
-                pinky.charShow();
 
-                pacman.setSpeed(5);
+                pacman.SetSpeed(5);
                 currentSpeed = pacman.GetSpeed();
                 vulnticks = 0;
                 vulnerableTimer.Stop();
@@ -313,77 +352,83 @@ namespace PacMan
         private void GhostsRecover()
         {
             //Blinky:
-            if (blinky.goUp) 
+            if (blinky.GoUp) 
             {
-                blinky.img = Properties.Resources.blinky_up;
+                blinky.Img = Properties.Resources.blinky_up;
             }
-            if (blinky.goDown) 
+            if (blinky.GoDown) 
             {
-                blinky.img = Properties.Resources.blinky_down;
+                blinky.Img = Properties.Resources.blinky_down;
             }
-            if (blinky.goLeft) 
+            if (blinky.GoLeft) 
             {
-                blinky.img = Properties.Resources.blinky_left;
+                blinky.Img = Properties.Resources.blinky_left;
             }
-            if (blinky.goRight) 
+            if (blinky.GoRight) 
             {
-                blinky.img = Properties.Resources.blinky_right;
+                blinky.Img = Properties.Resources.blinky_right;
             }
 
             // Clyde:
 
-            if (clyde.goUp)
+            if (clyde.GoUp)
             {
-                clyde.img = Properties.Resources.clyde_up;
+                clyde.Img = Properties.Resources.clyde_up;
             }
-            if (clyde.goDown)
+            if (clyde.GoDown)
             {
-                clyde.img = Properties.Resources.clyde_down;
+                clyde.Img = Properties.Resources.clyde_down;
             }
-            if (clyde.goLeft)
+            if (clyde.GoLeft)
             {
-                clyde.img = Properties.Resources.clyde_left;
+                clyde.Img = Properties.Resources.clyde_left;
             }
-            if (clyde.goRight)
+            if (clyde.GoRight)
             {
-                clyde.img = Properties.Resources.clyde_right;
+                clyde.Img = Properties.Resources.clyde_right;
             }
 
             // Inky:
-            if (inky.goUp)
+            if (inky.GoUp)
             {
-                inky.img = Properties.Resources.inky_up;
+                inky.Img = Properties.Resources.inky_up;
             }
-            if (inky.goDown)
+            if (inky.GoDown)
             {
-                inky.img = Properties.Resources.inky_down;
+                inky.Img = Properties.Resources.inky_down;
             }
-            if (inky.goLeft)
+            if (inky.GoLeft)
             {
-                inky.img = Properties.Resources.inky_left;
+                inky.Img = Properties.Resources.inky_left;
             }
-            if (inky.goRight)
+            if (inky.GoRight)
             {
-                inky.img = Properties.Resources.inky_right;
+                inky.Img = Properties.Resources.inky_right;
             }
 
             // Pinky:
-            if (pinky.goUp)
+            if (pinky.GoUp)
             {
-                pinky.img = Properties.Resources.pinky_up;
+                pinky.Img = Properties.Resources.pinky_up;
             }
-            if (pinky.goDown)
+            if (pinky.GoDown)
             {
-                pinky.img = Properties.Resources.pinky_down;
+                pinky.Img = Properties.Resources.pinky_down;
             }
-            if (pinky.goLeft)
+            if (pinky.GoLeft)
             {
-                pinky.img = Properties.Resources.pinky_left;
+                pinky.Img = Properties.Resources.pinky_left;
             }
-            if (pinky.goRight)
+            if (pinky.GoRight)
             {
-                pinky.img = Properties.Resources.pinky_right;
+                pinky.Img = Properties.Resources.pinky_right;
             }
+
+
+            blinky.CharShow();
+            clyde.CharShow();
+            inky.CharShow();
+            pinky.CharShow();
         }
 
     }

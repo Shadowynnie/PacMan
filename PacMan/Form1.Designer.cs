@@ -514,12 +514,12 @@
             this.pacmanBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pacmanBox.TabIndex = 167;
             this.pacmanBox.TabStop = false;
-            this.pacmanBox.Tag = "";
+            this.pacmanBox.Tag = "pacman";
             // 
             // pictureBox153
             // 
             this.pictureBox153.Image = global::PacMan.Properties.Resources.star_food;
-            this.pictureBox153.Location = new System.Drawing.Point(374, 466);
+            this.pictureBox153.Location = new System.Drawing.Point(378, 467);
             this.pictureBox153.Name = "pictureBox153";
             this.pictureBox153.Size = new System.Drawing.Size(25, 24);
             this.pictureBox153.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;

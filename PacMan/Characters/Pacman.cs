@@ -16,24 +16,24 @@ namespace PacMan.Characters
         /// </summary>
         
         // Basic atributes
-        public string name { get; set; } // Name used in the tag of the picture box
+        public string Name { get; set; } // Name used in the tag of the picture box
         public int X { get; set; } //Position X
         public int Y { get; set; } // Position Y
-        public int speed { get; set; } // Movement speed
-        public bool dead { get; set; } // Dead / Alive
+        public int Speed { get; set; } // Movement speed
+        public bool Dead { get; set; } // Dead / Alive
 
         //Directions:
-        public bool goUp { get; set; }
-        public bool goDown { get; set; }
-        public bool goLeft { get; set; }
-        public bool goRight { get; set; }
+        public bool GoUp { get; set; }
+        public bool GoDown { get; set; }
+        public bool GoLeft { get; set; }
+        public bool GoRight { get; set; }
         //public bool hitWall { get; set; }
 
         public bool CanMove { get; set; } = true;
 
         //Character displaying atributes
-        public Image img { get; set; } // The character gif image to show in the picture box
-        public PictureBox charBox { get; set; } // The object's picture box to show the character image
+        public Image Img { get; set; } // The character gif image to show in the picture box
+        public PictureBox CharBox { get; set; } // The object's picture box to show the character image
         
         /// <summary>
         /// Methods
@@ -47,54 +47,54 @@ namespace PacMan.Characters
 
             if (CanMove)
             {
-                if (goUp)
+                if (GoUp)
                 {
-                    Y -= speed;
+                    Y -= Speed;
                 }
-                if (goDown)
+                if (GoDown)
                 {
-                    Y += speed;
+                    Y += Speed;
                 }
-                if (goRight)
+                if (GoRight)
                 {
-                    X += speed;
+                    X += Speed;
                 }
-                if (goLeft)
+                if (GoLeft)
                 {
-                    X -= speed;
+                    X -= Speed;
                 }
-                setPosition(X, Y);
+                SetPosition(X, Y);
             }
             else 
             {
-                if (goUp) 
+                if (GoUp) 
                 {
                     //setPosition(X, Y + 16);
-                    speed = -speed;
-                    Y -= speed;
-                    goUp = false;
+                    Speed = -Speed;
+                    Y -= Speed;
+                    GoUp = false;
                     
                 }
-                if (goDown) 
+                if (GoDown) 
                 {
                     //setPosition(X, Y - 16);
-                    speed = -speed;
-                    Y += speed;
-                    goDown = false;
+                    Speed = -Speed;
+                    Y += Speed;
+                    GoDown = false;
                 }
-                if (goRight) 
+                if (GoRight) 
                 {
                     //setPosition(X - 16, Y);
-                    speed = -speed;
-                    X += speed;
-                    goRight = false;
+                    Speed = -Speed;
+                    X += Speed;
+                    GoRight = false;
                 }
-                if (goLeft) 
+                if (GoLeft) 
                 {
                     //setPosition(X + 16, Y);
-                    speed = -speed;
-                    X -= speed;
-                    goLeft = false;
+                    Speed = -Speed;
+                    X -= Speed;
+                    GoLeft = false;
                 }
                 //ResumeMoving();
             }
@@ -114,29 +114,29 @@ namespace PacMan.Characters
         }
 
         // Sets the picture box with the pacman at the new position according to a speed increment
-        public void setPosition(int x, int y) 
+        public void SetPosition(int x, int y) 
         {
-            charBox.Location = new Point(x, y);
+            CharBox.Location = new Point(x, y);
         }
 
         // Sets the object's picture box for showing the pacman in the form
-        public void charShow() 
+        public void CharShow() 
         {
-            charBox.Height = img.Height;
-            charBox.Width = img.Width;
-            charBox.Location = new Point(X, Y);
-            charBox.Tag = name;
-            charBox.Visible = true;
-            charBox.Image = img;
-            charBox.Show();
+            CharBox.Height = Img.Height;
+            CharBox.Width = Img.Width;
+            CharBox.Location = new Point(X, Y);
+            CharBox.Tag = Name;
+            CharBox.Visible = true;
+            CharBox.Image = Img;
+            CharBox.Show();
         }
-        public void setSpeed(int speed) 
+        public void SetSpeed(int speed) 
         {
-            this.speed = speed;
+            this.Speed = speed;
         }
         public int GetSpeed() 
         {
-            return speed; 
+            return Speed; 
         }
 
         public int GetX() 
@@ -162,13 +162,13 @@ namespace PacMan.Characters
         /// <param name="img"></param>
         public Pacman(string name, int x, int y, int speed, bool dead, Image img, PictureBox charBox)
         {
-            this.name = name;
+            this.Name = name;
             X = x;
             Y = y;
-            this.speed = speed;
-            this.dead = dead;
-            this.img = img;
-            this.charBox = charBox;
+            this.Speed = speed;
+            this.Dead = dead;
+            this.Img = img;
+            this.CharBox = charBox;
         }
     }
 }
